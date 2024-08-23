@@ -5,7 +5,7 @@
     </div>
     <form @submit.prevent="addTodo" class="mx-auto mt-16 max-w-xl sm:mt-20">
       <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div class="sm:col-span-2">
+        <div v-if="!isRandomOperation" class="sm:col-span-2">
           <label for="term1" class="block text-sm font-semibold leading-6 text-gray-900">Term 1:</label>
           <input
             type="text"
@@ -28,7 +28,7 @@
             </option>
           </select>
         </div>
-        <div class="sm:col-span-2">
+        <div v-if="!isRandomOperation && !isSquareRootOperation" class="sm:col-span-2">
           <label for="term2" class="block text-sm font-semibold leading-6 text-gray-900">Term 2:</label>
           <input
             type="text"
@@ -73,6 +73,10 @@ export default defineComponent({
       { name: "randomString", symbol: "🎲", id: 6 },
     ]);
 
+    // Computed property to check if the selected operation is "randomString"
+    const isRandomOperation = computed(() => operation.value === 'randomString');
+    const isSquareRootOperation = computed(() => operation.value === 'squareRoot');
+
     const addTodo = async () => {
       try {
         const response = await axios.post<Todo>('http://localhost:8000/api/operation/', {
@@ -98,7 +102,9 @@ export default defineComponent({
       term2,
       operation,
       operations,
-      addTodo
+      addTodo,
+      isRandomOperation,
+      isSquareRootOperation
     };
   }
 });
