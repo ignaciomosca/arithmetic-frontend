@@ -22,20 +22,20 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
+
 export default defineComponent({
   name: 'UserLogin',
   setup() {
     const username = ref<string>('');
     const password = ref<string>('');
     const router = useRouter();
+    const config = useRuntimeConfig();
+
 
     const login = async () => {
       try {
-        const params = new URLSearchParams();
-        params.append('username', username.value);
-        params.append('password', password.value);
-
-        const response = await axios.post('http://localhost:8000/api/auth/token', {
+        console.log(`${config.public.apiBaseUrl}/api/auth/token`);
+        const response = await axios.post(`${config.public.apiBaseUrl}/api/auth/token`, {
             username: username.value,
             password: password.value
           });
