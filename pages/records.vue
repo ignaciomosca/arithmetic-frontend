@@ -14,17 +14,20 @@
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Balance</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operation Response</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delete</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="record in records" :key="record.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.id }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.operation_id }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_id }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.amount }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_balance }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.operation_response }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.date }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <button @click="deleteRecord(record.id)" class="text-red-600 hover:text-red-900">Delete</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -100,6 +103,18 @@ export default defineComponent({
         this.records = response.data;
       } catch (error) {
         console.error(error);
+      }
+    },
+    async deleteRecord(recordId: number) {
+      try {
+        await axios.delete(`http://localhost:8000/api/operation/${recordId}/`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        this.records = this.records.filter(record => record.id !== recordId);
+      } catch (error) {
+        console.error('Failed to delete record:', error);
       }
     },
   },
