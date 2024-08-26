@@ -68,10 +68,10 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import axios from 'axios';
 
 interface Record {
   id: number;
-  operation_id: number;
   user_id: number;
   amount: number;
   user_balance: number;
@@ -81,40 +81,27 @@ interface Record {
 
 export default defineComponent({
   name: 'RecordTable',
-  setup() {
-    const records = ref<Record[]>([
-      {
-        id: 1,
-        operation_id: 101,
-        user_id: 1,
-        amount: 100.5,
-        user_balance: 900.5,
-        operation_response: 'Success',
-        date: '2024-08-26',
-      },
-      {
-        id: 2,
-        operation_id: 102,
-        user_id: 2,
-        amount: 200.75,
-        user_balance: 799.25,
-        operation_response: 'Failed',
-        date: '2024-08-25',
-      },
-      {
-        id: 3,
-        operation_id: 103,
-        user_id: 3,
-        amount: 50.0,
-        user_balance: 450.0,
-        operation_response: 'Success',
-        date: '2024-08-24',
-      },
-    ]);
-
+  data() {
     return {
-      records,
+      records: [] as Record[],
     };
+  },
+  async mounted() {
+    await this.fetchRecords();
+  },
+  methods: {
+    async fetchRecords() {
+      try {
+        const response = await axios.get<Record[]>('http://localhost:8000/api/operation/', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        this.records = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 });
 </script>
