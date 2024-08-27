@@ -4,11 +4,20 @@
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Records</h2>
     </div>
     <div class="mx-auto mt-16 max-w-xl sm:mt-20">
+      <input
+        v-model="searchTerm"
+        @input="search"
+        type="text"
+        placeholder="Search by operation"
+        class="mt-4 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      />
+    </div>
+    <div class="mx-auto mt-16 max-w-xl sm:mt-20">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operation ID</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operation</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Balance</th>
@@ -20,6 +29,7 @@
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="record in records" :key="record.id">
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.operation_text }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_id }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.amount }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_balance }}</td>
@@ -78,6 +88,7 @@ interface Record {
   user_id: number;
   amount: number;
   user_balance: number;
+  operation_text: string;
   operation_response: string;
   date: string;
 }
@@ -87,6 +98,7 @@ export default defineComponent({
   data() {
     return {
       records: [] as Record[],
+      searchTerm: '' as string,
     };
   },
   async mounted() {
@@ -115,6 +127,18 @@ export default defineComponent({
         this.records = this.records.filter(record => record.id !== recordId);
       } catch (error) {
         console.error('Failed to delete record:', error);
+      }
+    },
+    async search() {
+      try {
+        const response = await axios.get(`http://localhost:8000/api/operation/search/${this.searchTerm}/`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        this.records = response.data;
+      } catch (error) {
+        console.error('Failed to search records:', error);
       }
     },
   },
