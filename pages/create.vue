@@ -50,6 +50,7 @@
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useRuntimeConfig } from '#app';
 
 interface Todo {
   username: string;
@@ -65,9 +66,11 @@ export default defineComponent({
     const password = ref<string>('');
     const confirmPassword = ref<string>('');
 
+    const config = useRuntimeConfig();
+
     const createUser = async () => {
       try {
-        const response = await axios.post<Todo>('http://localhost:8000/api/auth/', {
+        const response = await axios.post<Todo>(`${config.public.apiBaseUrl}/api/auth/`, {
           username: username.value,
           password: password.value
         });

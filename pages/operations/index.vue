@@ -15,11 +15,11 @@
           />
         </div>
         <div class="sm:col-span-2">
-          <label for="operation" class="block text-sm font-medium text-gray-900">Choose an operation</label>
+          <label for="type" class="block text-sm font-medium text-gray-900">Choose an operation</label>
           <select
-            id="operation"
-            v-model="operation"
-            name="operation"
+            id="type"
+            v-model="type"
+            name="type"
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
           >
             <option disabled value="">Select an operation</option>
@@ -43,6 +43,15 @@
           Perform Operation
         </button>
       </div>
+      <div v-if="!isResultEmpty" class="sm:col-span-2">
+          <label for="result" class="block text-sm font-semibold leading-6 text-gray-900">Result:</label>
+          <input
+            type="text"
+            id="result"
+            v-model="result"
+            class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+        </div>
     </form>
     <p class="mt-10 text-center text-sm text-gray-500">
       Check previous operations
@@ -54,40 +63,51 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
+import { useRuntimeConfig } from '#app';
+
 
 interface Todo {
-  id: number;
-  term1: string;
-  term2: string;
-  description: string;
+  first_term?: string | null;
+  second_term?: string | null;
+  type: string;
 }
 
 export default defineComponent({
   name: 'TodoList',
   setup() {
-    const term1 = ref<string>('');
-    const term2 = ref<string>('');
-    const operation = ref<string>('');
+    const term1 = ref<string | null>(null);
+    const term2 = ref<string | null>(null);
+    const type = ref<string>('');
+    const result = ref<string>('');
     const operations = ref([
-      { name: "addition", symbol: "+", id: 1 },
-      { name: "subtraction", symbol: "-", id: 2 },
-      { name: "multiplication", symbol: "x", id: 3 },
-      { name: "division", symbol: "/", id: 4 },
+      { name: "addition", symbol: "➕", id: 1 },
+      { name: "subtraction", symbol: "➖", id: 2 },
+      { name: "multiplication", symbol: "✖️", id: 3 },
+      { name: "division", symbol: "➗", id: 4 },
       { name: "squareRoot", symbol: "√", id: 5 },
       { name: "randomString", symbol: "🎲", id: 6 },
     ]);
 
-    // Computed property to check if the selected operation is "randomString"
-    const isRandomOperation = computed(() => operation.value === 'randomString');
-    const isSquareRootOperation = computed(() => operation.value === 'squareRoot');
+    const config = useRuntimeConfig();
+
+    const isRandomOperation = computed(() => type.value === 'randomString');
+    const isSquareRootOperation = computed(() => type.value === 'squareRoot');
+    const isResultEmpty = computed(() => result.value === '');
 
     const addTodo = async () => {
       try {
-        const response = await axios.post<Todo>('http://localhost:8000/api/operation/', {
-          first_term: term1.value,
-          second_term: term2.value,
-          type: operation.value
-        }, {
+        const payload: Partial<Todo> = {
+          type: type.value,
+        };
+
+        if (!isRandomOperation.value) {
+          payload.first_term = term1.value;
+        }
+        if (!isRandomOperation.value && !isSquareRootOperation.value) {
+          payload.second_term = term2.value;
+        }
+        result.value = '';
+        const response = await axios.post<string>(`${config.public.apiBaseUrl}/api/operation/`, payload, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -95,7 +115,8 @@ export default defineComponent({
         // Clear the form fields after submission
         term1.value = '';
         term2.value = '';
-        operation.value = '';
+        type.value = '';
+        result.value = response.data;
       } catch (error) {
         console.error(error);
       }
@@ -104,11 +125,13 @@ export default defineComponent({
     return {
       term1,
       term2,
-      operation,
+      result,
+      type,
       operations,
       addTodo,
       isRandomOperation,
-      isSquareRootOperation
+      isSquareRootOperation,
+      isResultEmpty
     };
   }
 });

@@ -38,12 +38,10 @@ export default defineComponent({
 
     const login = async () => {
       try {
-        console.log(`${config.public.apiBaseUrl}/api/auth/token`);
         const response = await axios.post(`${config.public.apiBaseUrl}/api/auth/token`, {
             username: username.value,
             password: password.value
           });
-        console.log(response.data);
         localStorage.setItem('token', response.data.access_token);
         router.push('/operations');
       } catch (error) {

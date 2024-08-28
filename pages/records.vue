@@ -3,6 +3,10 @@
     <div class="mx-auto max-w-2xl text-center">
       <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Records</h2>
     </div>
+    <p class="mt-10 text-center text-sm text-gray-500">
+      Keep performing
+      <a href="/operations" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Operations</a>
+    </p>
     <div class="mx-auto mt-16 max-w-xl sm:mt-20">
       <input
         v-model="searchTerm"
@@ -82,6 +86,9 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
+import { useRuntimeConfig } from '#app';
+
+const config = useRuntimeConfig();
 
 interface Record {
   id: number;
@@ -107,7 +114,7 @@ export default defineComponent({
   methods: {
     async fetchRecords() {
       try {
-        const response = await axios.get<Record[]>('http://localhost:8000/api/operation/', {
+        const response = await axios.get<Record[]>(`${config.public.apiBaseUrl}/api/operation/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -119,7 +126,7 @@ export default defineComponent({
     },
     async deleteRecord(recordId: number) {
       try {
-        await axios.delete(`http://localhost:8000/api/operation/${recordId}/`, {
+        await axios.delete(`${config.public.apiBaseUrl}/api/operation/${recordId}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -131,7 +138,7 @@ export default defineComponent({
     },
     async search() {
       try {
-        const response = await axios.get(`http://localhost:8000/api/operation/search/${this.searchTerm}/`, {
+        const response = await axios.get(`${config.public.apiBaseUrl}/api/operation/search/${this.searchTerm}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
