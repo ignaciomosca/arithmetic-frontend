@@ -13,7 +13,7 @@
         @input="search"
         type="text"
         placeholder="Search by operation"
-        class="mt-4 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
       />
     </div>
     <div class="mx-auto mt-16 max-w-xl sm:mt-20">
@@ -122,6 +122,12 @@ interface Records {
 
 export default defineComponent({
   name: 'RecordTable',
+  setup() {
+    const config = useRuntimeConfig();
+    return {
+      config,
+    };
+  },
   data() {
     return {
       records: [] as Record[],
@@ -138,8 +144,7 @@ export default defineComponent({
   methods: {
     async fetchRecords() {
       try {
-        const config = useRuntimeConfig();
-        const response = await axios.get<Records>(`http://localhost:8000/api/operation/`, {
+        const response = await axios.get<Records>(`${this.config.public.apiBaseUrl}/api/operation/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -156,7 +161,7 @@ export default defineComponent({
     },
     async deleteRecord(recordId: number) {
       try {
-        await axios.delete(`${config.public.apiBaseUrl}/api/operation/${recordId}/`, {
+        await axios.delete(`${this.config.public.apiBaseUrl}/api/operation/${recordId}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -168,7 +173,7 @@ export default defineComponent({
     },
     async search() {
       try {
-        const response = await axios.get(`${config.public.apiBaseUrl}/api/operation/search/${this.searchTerm}/`, {
+        const response = await axios.get(`${this.config.public.apiBaseUrl}/api/operation/search/${this.searchTerm}/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
