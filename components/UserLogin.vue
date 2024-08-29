@@ -1,15 +1,15 @@
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Login</h2>
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-indigo-500">Login</h2>
     </div>
     <form class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm space-y-6" @submit.prevent="login">
       <div class="form-group">
-        <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username:</label>
+        <label for="username" class="block text-sm font-medium leading-6 text-indigo-500">Username:</label>
         <input type="text" id="username" v-model="username"  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
       </div>
       <div class="form-group">
-        <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password:</label>
+        <label for="password" class="block text-sm font-medium leading-6 text-indigo-500">Password:</label>
         <input type="password" id="password" v-model="password" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
       </div>
       <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Login</button>
@@ -35,6 +35,7 @@ export default defineComponent({
     const password = ref<string>('');
     const router = useRouter();
     const config = useRuntimeConfig();
+    const toast = useToast()
 
     const login = async () => {
       try {
@@ -46,10 +47,17 @@ export default defineComponent({
         localStorage.setItem('token', response.data.access_token);
         router.push('/operations');
       } catch (error) {
+        toast.add(
+          {
+            id: 'login_fail',
+            title: 'Login Failed.',
+            description: 'User or Password is invalid',
+            icon: 'i-octicon-alert-24',
+            timeout: 0
+          });
         console.error('Login failed: Please check your credentials and try again.');
       }
     };
-
     return {
       username,
       password,
