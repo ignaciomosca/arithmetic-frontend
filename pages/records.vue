@@ -1,7 +1,7 @@
 <template>
-  <div class="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+  <div class="isolate bg-black px-6 py-24 sm:py-32 lg:px-8">
     <div class="mx-auto max-w-2xl text-center">
-      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Records</h2>
+      <h2 class="text-3xl font-bold tracking-tight text-indigo-500 sm:text-4xl">Records</h2>
     </div>
     <p class="mt-10 text-center text-sm text-gray-500">
       Keep performing
@@ -32,14 +32,14 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="record in records" :key="record.id">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.id }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.operation_text }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_id }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.amount }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.user_balance }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.operation_response }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ record.date }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.operation_text }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.user_id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.amount }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.user_balance }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.operation_response }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">{{ record.date }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-500">
               <button @click="deleteRecord(record.id)" class="text-red-600 hover:text-red-900">Delete</button>
             </td>
           </tr>
@@ -47,13 +47,13 @@
       </table>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between mt-6">
   <div>
-    <p class="text-sm text-gray-700">
+    <p class="mt-10 text-center text-sm text-gray-500">
       Showing
-      <span class="font-medium">{{ (offset + 1) }}</span>
+      <span class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">{{ (offset + 1) }}</span>
       to
-      <span class="font-medium">{{ Math.min(offset + limit, records.length) }}</span>
+      <span class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">{{ Math.min(offset + limit, records.length) }}</span>
       of
-      <span class="font-medium">{{ totalPages * limit }}</span>
+      <span class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">{{ totalPages * limit }}</span>
       results
     </p>
   </div>
@@ -76,7 +76,7 @@
           @click="changePage(page)"
           :class="{
             'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white': currentPage === page,
-            'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50': currentPage !== page,
+            'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-indigo-500 ring-1 ring-inset ring-gray-300 hover:bg-gray-50': currentPage !== page,
           }"
         >
           {{ page }}
