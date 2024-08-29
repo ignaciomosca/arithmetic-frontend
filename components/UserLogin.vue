@@ -25,6 +25,7 @@
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useNuxtApp } from '#app';
 
 
 export default defineComponent({
@@ -35,17 +36,17 @@ export default defineComponent({
     const router = useRouter();
     const config = useRuntimeConfig();
 
-
     const login = async () => {
       try {
         const response = await axios.post(`${config.public.apiBaseUrl}/api/auth/token`, {
             username: username.value,
             password: password.value
           });
+        console.log(response);
         localStorage.setItem('token', response.data.access_token);
         router.push('/operations');
       } catch (error) {
-        console.error(error);
+        console.error('Login failed: Please check your credentials and try again.');
       }
     };
 

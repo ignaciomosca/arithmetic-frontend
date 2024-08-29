@@ -45,41 +45,57 @@
           </tr>
         </tbody>
       </table>
-
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between mt-6">
-        <div>
-          <p class="text-sm text-gray-700">
-            Showing
-            <span class="font-medium">1</span>
-            to
-            <span class="font-medium">3</span>
-            of
-            <span class="font-medium">{{ records.length }}</span>
-            results
-          </p>
-        </div>
-        <div>
-          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-              <span class="sr-only">Previous</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-              </svg>
-            </a>
-            <a href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">1</a>
-            <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">2</a>
-            <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">3</a>
-            <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
-            <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-              <span class="sr-only">Next</span>
-              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-              </svg>
-            </a>
-          </nav>
-        </div>
-      </div>
+  <div>
+    <p class="text-sm text-gray-700">
+      Showing
+      <span class="font-medium">{{ (offset + 1) }}</span>
+      to
+      <span class="font-medium">{{ Math.min(offset + limit, records.length) }}</span>
+      of
+      <span class="font-medium">{{ totalPages * limit }}</span>
+      results
+    </p>
+  </div>
+  <div>
+      <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+        <button
+          @click="changePage(currentPage - 1)"
+          :disabled="currentPage === 1"
+          class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+        >
+          <span class="sr-only">Previous</span>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          @click="changePage(page)"
+          :class="{
+            'relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white': currentPage === page,
+            'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50': currentPage !== page,
+          }"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          @click="changePage(currentPage + 1)"
+          :disabled="currentPage === totalPages"
+          class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+        >
+          <span class="sr-only">Next</span>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </nav>
     </div>
+  </div>
+  </div>
   </div>
 </template>
 
@@ -88,7 +104,6 @@ import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { useRuntimeConfig } from '#app';
 
-const config = useRuntimeConfig();
 
 interface Record {
   id: number;
@@ -100,12 +115,21 @@ interface Record {
   date: string;
 }
 
+interface Records {
+  records: Record[];
+  total_count: number;
+}
+
 export default defineComponent({
   name: 'RecordTable',
   data() {
     return {
       records: [] as Record[],
       searchTerm: '' as string,
+      limit: 10,
+      offset: 0,
+      currentPage: 1,
+      totalPages: 0,
     };
   },
   async mounted() {
@@ -114,12 +138,18 @@ export default defineComponent({
   methods: {
     async fetchRecords() {
       try {
-        const response = await axios.get<Record[]>(`${config.public.apiBaseUrl}/api/operation/`, {
+        const config = useRuntimeConfig();
+        const response = await axios.get<Records>(`http://localhost:8000/api/operation/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
+          params: {
+            limit: this.limit,
+            offset: this.offset,
+          },
         });
-        this.records = response.data;
+        this.records = response.data.records;
+        this.totalPages = Math.ceil(response.data.total_count / this.limit);
       } catch (error) {
         console.error(error);
       }
@@ -147,6 +177,11 @@ export default defineComponent({
       } catch (error) {
         console.error('Failed to search records:', error);
       }
+    },
+    changePage(page: number) {
+      this.currentPage = page;
+      this.offset = (this.currentPage - 1) * this.limit;
+      this.fetchRecords();
     },
   },
 });
