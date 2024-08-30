@@ -25,7 +25,6 @@
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { useNuxtApp } from '#app';
 
 
 export default defineComponent({
@@ -46,16 +45,27 @@ export default defineComponent({
         console.log(response);
         localStorage.setItem('token', response.data.access_token);
         router.push('/operations');
-      } catch (error) {
-        toast.add(
-          {
+      } catch (error: unknown) {
+        if (isAxiosError(error)) {
+          const detail = getErrorDetail(error);
+          toast.add({
             id: 'login_fail',
             title: 'Login Failed.',
-            description: 'User or Password is invalid',
+            description: detail ?? 'User or Password is invalid',
             icon: 'i-octicon-alert-24',
             timeout: 0
           });
-        console.error('Login failed: Please check your credentials and try again.');
+          console.error(`Login failed: ${detail}`);
+        } else {
+          toast.add({
+            id: 'login_fail',
+            title: 'Login Failed.',
+            description: 'An unexpected error occurred. Please try again.',
+            icon: 'i-octicon-alert-24',
+            timeout: 0
+          });
+          console.error('Login failed: An unexpected error occurred.');
+        }
       }
     };
     return {
