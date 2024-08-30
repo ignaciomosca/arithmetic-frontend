@@ -11,6 +11,9 @@ importers:
       '@heroicons/vue':
         specifier: ^2.1.5
         version: 2.1.5(vue@3.3.8)
+      '@nuxt/nitro':
+        specifier: ^0.10.0
+        version: 0.10.0
       '@nuxtjs/axios':
         specifier: ^5.13.6
         version: 5.13.6
@@ -1120,6 +1123,9 @@ packages:
   '@nuxt/kit@3.8.2':
     resolution: {integrity: sha512-LrXCm8hAkw+zpX8teUSD/LqXRarlXjbRiYxDkaqw739JSHFReWzBFgJbojsJqL4h1XIEScDGGOWiEgO4QO1sMg==}
     engines: {node: ^14.18.0 || >=16.10.0}
+
+  '@nuxt/nitro@0.10.0':
+    resolution: {integrity: sha512-3ffdZMD0WK7UNgrkBhOyPr3fyOfmy2nPMxDOaX6eUCamr5NuY7cHQhWnum/BwSm1vIOm4b9/rnd/cgYcg9qiag==}
 
   '@nuxt/schema@3.13.0':
     resolution: {integrity: sha512-JBGSjF9Hd8guvTV2312eM1RulCMJc50yR3CeMZPLDsI02A8TXQnABS8EbgvGRvxD43q/ITjj21B2ffG1wEVrnQ==}
@@ -6248,6 +6254,8 @@ snapshots:
     transitivePeerDependencies:
       - rollup
       - supports-color
+
+  '@nuxt/nitro@0.10.0': {}
 
   '@nuxt/schema@3.13.0(rollup@4.21.1)':
     dependencies:
